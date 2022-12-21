@@ -21,7 +21,7 @@
           :icon="'account'"
           :boxb="false"
       >
-        <ve-pie :data="starData" :extend="extend" :height="'300px'"></ve-pie>
+        <ve-pie :data="starData" :extend="extend" :height="'315px'"></ve-pie>
 
       </databox>
         <div class="cloud-chart">

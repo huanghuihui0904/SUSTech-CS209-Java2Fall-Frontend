@@ -229,22 +229,33 @@ export default {
 
   methods: {
     onSubmit() {
+      var regPos = /^\d+$/; // 非负整数
 
+      var isletter = /^[a-zA-Z]+$/;
+      var zg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]*$/;
       let _this = this
-      if(_this.firstRelease>_this.numRelease){
-        this.$notify.error({
-          title: '错误',
-          message: 'the number is larger than the release number'
-        });
-        return
-      }
-      if(!(_this.firstRelease<_this.numRelease&&_this.firstRelease>0)){
+      if(isletter.test(_this.firstRelease)||zg.test(_this.firstRelease)){
         this.$notify.error({
           title: '错误',
           message: 'number only'
         });
         return
       }
+      else if(!regPos.test(_this.firstRelease)||_this.firstRelease<=1){
+        this.$notify.error({
+          title: '错误',
+          message: 'the number is invalid'
+        });
+        return
+      }
+      else if(_this.firstRelease>_this.numRelease){
+        this.$notify.error({
+          title: '错误',
+          message: 'the number is larger than the release number'
+        });
+        return
+      }
+
       _this.$axios.get(
           'http://localhost:8081/'+_this.repo_owner+'/'+_this.repo_name+'/releaseTimeStampTop', {
             params: {
@@ -268,8 +279,8 @@ export default {
                     }
                   })
                   .then(function (response) {
-                    _this.releaseNum.push(response.data)
-                    _this.releaseName.push(_this.releaseTime[i].release_name)
+                    _this.releaseNum.unshift(response.data)
+                    _this.releaseName.unshift(_this.releaseTime[i].release_name)
                     // _this.$set(_this.releaseNum, i, response.data)
                     console.log("_this.releaseNum----------------")
                     console.log(response.data)
@@ -300,6 +311,7 @@ export default {
           this.getMostActive()
           this.getIssueOpen()
           this.getIssueClosed()
+          this.firstRelease=null
 
         }
 
@@ -398,8 +410,8 @@ export default {
                         }
                       })
                       .then(function (response) {
-                        _this.releaseNum.push(response.data)
-                        _this.releaseName.push(_this.releaseTime[i].release_name)
+                        _this.releaseNum.unshift(response.data)
+                        _this.releaseName.unshift(_this.releaseTime[i].release_name)
                         // _this.$set(_this.releaseNum, i, response.data)
                         console.log("_this.releaseNum----------------")
                         console.log(response.data)
@@ -408,7 +420,12 @@ export default {
                       .catch(function (error) {
                         // console.log(error);
                       });
-              }}
+              }
+
+
+
+
+              }
       )
           .catch(function (error) {
             // console.log("errpr")

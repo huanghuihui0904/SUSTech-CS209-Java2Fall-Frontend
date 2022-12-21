@@ -28,11 +28,12 @@ export default {
       ],
       activeIndex: 0,
       intNum: undefined,
+      numDeveloper:0
       // num:0
     };
   },
   created() {
-    this.getDeveloperInfo()
+    this.getNumDeveloper()
     this.getChange()
   },
   mounted(){
@@ -44,7 +45,7 @@ export default {
         if(repoInfo.shareName!==this.repo_name){
           this.repo_name=repoInfo.shareName
           this.repo_owner=repoInfo.shareOwner
-          this.getDeveloperInfo2()
+          this.getNumDeveloper2()
         }
 
       },5)
@@ -74,13 +75,44 @@ export default {
       this.ScrollUp();
       // console.log("start")
     },
-
-    getDeveloperInfo() {
+    getNumDeveloper() {
       // console.log("getNumRelease")
       const _this = this
       this.$axios.get(
+          'http://localhost:8081/'+_this.repo_owner+'/'+_this.repo_name+'/developerCount', {
+            params: {}
+          })
+          .then(function (response) {
+            _this.numDeveloper = response.data
+            _this.getDeveloperInfo()
+            // console.log(response);
+          })
+          .catch(function (error) {
+            // console.log(error);
+          });
+    },    getNumDeveloper2() {
+      // console.log("getNumRelease")
+      const _this = this
+      this.$axios.get(
+          'http://localhost:8081/'+_this.repo_owner+'/'+_this.repo_name+'/developerCount', {
+            params: {}
+          })
+          .then(function (response) {
+            _this.numDeveloper = response.data
+            _this.getDeveloperInfo2()
+            // console.log(response);
+          })
+          .catch(function (error) {
+            // console.log(error);
+          });
+    },
+    getDeveloperInfo() {
+      // console.log("getNumRelease")
+      const _this = this
+
+      this.$axios.get(
           'http://localhost:8081/'+_this.repo_owner+'/'+_this.repo_name+'/mostActiveTop', {
-            params: {top:"100"}
+            params: {top:_this.numDeveloper}
           })
           .then(function (response) {
             for (let i = 0; i < response.data.length ; i++) {
@@ -103,7 +135,7 @@ export default {
       const _this = this
       this.$axios.get(
           'http://localhost:8081/'+_this.repo_owner+'/'+_this.repo_name+'/mostActiveTop', {
-            params: {top:"100"}
+            params: {top:_this.numDeveloper}
           })
           .then(function (response) {
             _this.developerInfo=[]
